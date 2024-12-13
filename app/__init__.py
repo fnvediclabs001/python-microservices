@@ -1,4 +1,4 @@
-from flask import Flask, redirect,jsonify,request
+from flask import Flask, redirect, jsonify, request
 from flask.helpers import send_from_directory
 from config import Config
 from flask_mongoengine import MongoEngine
@@ -15,12 +15,16 @@ app = Flask(__name__)
 
 service_running = {"status": False}
 
-# Redirect to swagger-api-docs
-@app.route('/')
-def redirect_to_docs():
-    return redirect("http://127.0.0.1:5000/api/docs")
+# Redirect to Swagger docs
+@app.route('/api', methods=['GET'])
+def api_docs():
+    """
+    Show a message indicating that the service is running.
+    """
+    return jsonify(message="Service is running.")
 
-@app.route(Config.START, methods=['GET'])
+
+@app.route(Config.START, methods=['POST'])
 def handle_start_service():
     """
     Proxy to start_service function.
@@ -28,7 +32,7 @@ def handle_start_service():
     return start_service()
 
 
-@app.route(Config.STOP, methods=['GET'])
+@app.route(Config.STOP, methods=['POST'])
 #@jwt_required()
 def handle_stop_service():
     """
@@ -49,5 +53,4 @@ def initialize_app():
         })
     app.register_blueprint(swaggerui_blueprint)
 
-    
     return app
